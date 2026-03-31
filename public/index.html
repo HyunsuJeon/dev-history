@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>dev.history</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <div class="wrap">
+    <!-- 상단 바 -->
+    <div class="topbar">
+      <div class="logo">개발 히스토리</div>
+      <div class="stats">
+        <div class="stat"><div class="stat-n" id="stat-total">0</div><div class="stat-l">전체</div></div>
+        <div class="stat"><div class="stat-n feat" id="stat-feat">0</div><div class="stat-l">기능</div></div>
+        <div class="stat"><div class="stat-n bug" id="stat-bug">0</div><div class="stat-l">버그</div></div>
+        <div class="stat"><div class="stat-n cs" id="stat-cs">0</div><div class="stat-l">CS</div></div>
+      </div>
+    </div>
+
+    <!-- 입력 폼 -->
+    <div class="form-card">
+      <div class="form-row">
+        <div>
+          <div class="form-label">유형</div>
+          <select id="type" onchange="onTypeChange()">
+            <option value="기능개발">기능개발</option>
+            <option value="버그수정">버그수정</option>
+            <option value="CS응대">CS응대</option>
+          </select>
+        </div>
+        <div>
+          <div class="form-label">시작일</div>
+          <input type="date" id="date-start" />
+        </div>
+        <div id="date-end-wrap">
+          <div class="form-label">종료일</div>
+          <input type="date" id="date-end" />
+        </div>
+      </div>
+      <div class="form-label">제목</div>
+      <input type="text" id="title" placeholder="예) 로그인 화면 MVVM 전환" />
+      <div class="form-label">설명</div>
+      <textarea id="description" placeholder="어떤 작업을 했는지, 어떤 문제였는지 등 자유롭게 작성해봐요"></textarea>
+      <div class="form-label">태그 (쉼표로 구분)</div>
+      <input type="text" id="tags" placeholder="예) WPF, MVVM, DataGrid" />
+      <div class="form-bottom">
+        <label class="attach-label">
+          <div class="attach-icon">+</div>
+          <span>이미지 첨부</span>
+          <input type="file" id="image" accept="image/*" style="display:none" />
+        </label>
+        <span id="file-name" class="file-name"></span>
+        <button onclick="addRecord()">저장하기</button>
+      </div>
+    </div>
+
+    <!-- 필터 -->
+    <div class="filters">
+      <button class="fbtn on" onclick="filterRecords('전체', this)">전체</button>
+      <button class="fbtn" onclick="filterRecords('기능개발', this)">기능개발</button>
+      <button class="fbtn" onclick="filterRecords('버그수정', this)">버그수정</button>
+      <button class="fbtn" onclick="filterRecords('CS응대', this)">CS응대</button>
+    </div>
+
+    <!-- 기록 목록 -->
+    <div id="records-list"></div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
