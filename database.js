@@ -14,8 +14,23 @@ db.exec(`
   )
 `);
 
-try {
-  db.exec(`ALTER TABLE records ADD COLUMN tags TEXT`);
-} catch(e) {}
+db.exec(`
+  CREATE TABLE IF NOT EXISTS tasks (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    title TEXT NOT NULL,
+    type TEXT NOT NULL,
+    description TEXT,
+    tags TEXT,
+    priority TEXT DEFAULT '보통',
+    status TEXT DEFAULT '대기',
+    start_date TEXT,
+    deadline TEXT,
+    image_path TEXT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    completed_at DATETIME
+  )
+`);
+
+try { db.exec(`ALTER TABLE records ADD COLUMN tags TEXT`); } catch(e) {}
 
 module.exports = db;
