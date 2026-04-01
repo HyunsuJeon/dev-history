@@ -1,36 +1,40 @@
-const Database = require('better-sqlite3');
-const db = new Database('devhistory.db');
+const { Pool } = require('pg');
 
-db.exec(`
-  CREATE TABLE IF NOT EXISTS records (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    type TEXT NOT NULL,
-    title TEXT NOT NULL,
-    description TEXT,
-    image_path TEXT,
-    tags TEXT,
-    date TEXT NOT NULL,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-  )
-`);
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: { rejectUnauthorized: false }
+});
 
-db.exec(`
-  CREATE TABLE IF NOT EXISTS tasks (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    title TEXT NOT NULL,
-    type TEXT NOT NULL,
-    description TEXT,
-    tags TEXT,
-    priority TEXT DEFAULT '보통',
-    status TEXT DEFAULT '대기',
-    start_date TEXT,
-    deadline TEXT,
-    image_path TEXT,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    completed_at DATETIME
-  )
-`);
+async function init() {
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS records (
+      id SERIAL PRIMARY KEY,
+      type TEXT NOT NULL,
+      title TEXT NOT NULL,
+      description TEXT,
+      image_path TEXT,
+      tags TEXT,
+      date TEXT NOT NULL,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    )
+  `);
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS tasks (
+      id SERIAL PRIMARY KEY,
+      title TEXT NOT NULL,
+      type TEXT NOT NULL,
+      description TEXT,
+      tags TEXT,
+      priority TEXT DEFAULT '보통',
+      status TEXT DEFAULT '대기',
+      start_date TEXT,
+      deadline TEXT,
+      image_path TEXT,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      completed_at TIMESTAMP
+    )
+  `);
+  console.log('DB 테이블 준비 완료');
+}
 
-try { db.exec(`ALTER TABLE records ADD COLUMN tags TEXT`); } catch(e) {}
-
-module.exports = db;
+module.exports = { pool, init };
