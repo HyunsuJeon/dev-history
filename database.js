@@ -46,6 +46,15 @@ async function init() {
       completed_at TIMESTAMP
     )
   `);
+  // 기존 테이블에 누락된 컬럼 자동 추가 (마이그레이션)
+  const migrations = [
+    `ALTER TABLE records ADD COLUMN IF NOT EXISTS created_by TEXT`,
+    `ALTER TABLE tasks ADD COLUMN IF NOT EXISTS created_by TEXT`,
+    `ALTER TABLE tasks ADD COLUMN IF NOT EXISTS completed_at TIMESTAMP`,
+  ];
+  for (const sql of migrations) {
+    await pool.query(sql).catch(() => {});
+  }
   console.log('DB 테이블 준비 완료');
 }
 
