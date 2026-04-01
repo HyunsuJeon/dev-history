@@ -9,9 +9,46 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-<div class="wrap">
 
-  <!-- 헤더 -->
+<!-- ===== 인증 오버레이 ===== -->
+<div id="auth-overlay" class="auth-overlay">
+  <div class="auth-box">
+    <div class="auth-logo">
+      <div class="logo-icon">✦</div>
+      <span>dev.history</span>
+    </div>
+    <div class="auth-tabs">
+      <button class="auth-tab on" onclick="switchAuthTab('login', this)">로그인</button>
+      <button class="auth-tab" onclick="switchAuthTab('register', this)">회원가입</button>
+    </div>
+
+    <!-- 로그인 폼 -->
+    <div id="login-form">
+      <div class="form-label">아이디</div>
+      <input type="text" id="login-username" placeholder="아이디 입력" />
+      <div class="form-label">비밀번호</div>
+      <input type="password" id="login-password" placeholder="비밀번호 입력" />
+      <button class="btn-primary auth-submit" onclick="doLogin()">로그인</button>
+    </div>
+
+    <!-- 회원가입 폼 -->
+    <div id="register-form" style="display:none">
+      <div class="form-label">아이디</div>
+      <input type="text" id="reg-username" placeholder="사용할 아이디 입력" />
+      <div class="form-label">비밀번호</div>
+      <input type="password" id="reg-password" placeholder="비밀번호 입력" />
+      <div class="form-label">비밀번호 확인</div>
+      <input type="password" id="reg-password2" placeholder="비밀번호 재입력" />
+      <button class="btn-primary auth-submit" onclick="doRegister()">가입 신청</button>
+    </div>
+
+    <div id="auth-message" class="auth-message"></div>
+  </div>
+</div>
+
+<!-- ===== 메인 앱 ===== -->
+<div class="wrap" id="main-app" style="display:none">
+
   <div class="topbar">
     <div class="logo">
       <div class="logo-icon">✦</div>
@@ -20,10 +57,14 @@
     <div class="topbar-right">
       <div class="stats" id="stats-area"></div>
       <button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">🌙</button>
+      <div class="user-info">
+        <span id="username-display" class="username-badge"></span>
+        <button class="admin-btn" id="admin-btn" style="display:none" onclick="openAdminPanel()">⚙ 관리</button>
+        <button class="logout-btn" onclick="doLogout()">로그아웃</button>
+      </div>
     </div>
   </div>
 
-  <!-- 탭 -->
   <div class="tabs">
     <button class="tab on" onclick="switchTab('tasks', this)">
       <span class="tab-icon">📋</span> 할 일 관리
@@ -33,9 +74,8 @@
     </button>
   </div>
 
-  <!-- ===== 할 일 관리 ===== -->
+  <!-- 할 일 관리 -->
   <div id="section-tasks">
-
     <div class="form-card">
       <div class="form-card-title">새 할 일 추가</div>
       <div class="form-row form-row-4">
@@ -81,20 +121,17 @@
         <button class="btn-primary" onclick="addTask()">+ 추가하기</button>
       </div>
     </div>
-
     <div class="filters">
       <button class="fbtn on" onclick="filterTasks('전체', this)">전체</button>
       <button class="fbtn" onclick="filterTasks('대기', this)">대기</button>
       <button class="fbtn" onclick="filterTasks('진행중', this)">진행중</button>
       <button class="fbtn" onclick="filterTasks('완료', this)">완료</button>
     </div>
-
     <div id="tasks-list"></div>
   </div>
 
-  <!-- ===== 개발 히스토리 ===== -->
+  <!-- 개발 히스토리 -->
   <div id="section-history" style="display:none">
-
     <div class="form-card">
       <div class="form-card-title">히스토리 직접 추가</div>
       <div class="form-row">
@@ -132,7 +169,6 @@
         <button class="btn-primary" onclick="addRecord()">+ 저장하기</button>
       </div>
     </div>
-
     <div class="filters">
       <button class="fbtn on" onclick="filterRecords('전체', this)">전체</button>
       <button class="fbtn" onclick="filterRecords('기능개발', this)">기능개발</button>
@@ -140,7 +176,6 @@
       <button class="fbtn" onclick="filterRecords('CS응대', this)">CS응대</button>
       <button class="fbtn" onclick="filterRecords('장애내역', this)">장애내역</button>
     </div>
-
     <div id="records-list"></div>
   </div>
 
@@ -167,7 +202,23 @@
     </div>
   </div>
 
+  <!-- 관리자 패널 모달 -->
+  <div id="admin-modal" class="modal-overlay" style="display:none">
+    <div class="modal-box admin-modal-box">
+      <div class="modal-header">
+        <div class="modal-title">⚙ 사용자 관리</div>
+        <button class="modal-close" onclick="closeAdminPanel()">✕</button>
+      </div>
+      <div class="admin-tabs">
+        <button class="admin-tab on" onclick="switchAdminTab('pending', this)">대기중</button>
+        <button class="admin-tab" onclick="switchAdminTab('approved', this)">승인됨</button>
+      </div>
+      <div id="admin-users-list"></div>
+    </div>
+  </div>
+
 </div>
+
 <script src="app.js"></script>
 </body>
 </html>

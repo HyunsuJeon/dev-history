@@ -7,6 +7,16 @@ const pool = new Pool({
 
 async function init() {
   await pool.query(`
+    CREATE TABLE IF NOT EXISTS users (
+      id SERIAL PRIMARY KEY,
+      username TEXT UNIQUE NOT NULL,
+      password_hash TEXT NOT NULL,
+      role TEXT DEFAULT 'user',
+      status TEXT DEFAULT 'pending',
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    )
+  `);
+  await pool.query(`
     CREATE TABLE IF NOT EXISTS records (
       id SERIAL PRIMARY KEY,
       type TEXT NOT NULL,
@@ -15,6 +25,7 @@ async function init() {
       image_path TEXT,
       tags TEXT,
       date TEXT NOT NULL,
+      created_by TEXT,
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )
   `);
@@ -30,6 +41,7 @@ async function init() {
       start_date TEXT,
       deadline TEXT,
       image_path TEXT,
+      created_by TEXT,
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       completed_at TIMESTAMP
     )
