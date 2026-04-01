@@ -310,22 +310,34 @@ function filterTasks(status, btn) {
 
 async function addTask() {
   const title = document.getElementById('task-title').value.trim();
+  const startDate = document.getElementById('task-start').value;
+  const deadline = document.getElementById('task-deadline').value;
   if (!title) { alert('제목은 필수예요!'); return; }
+  if (!startDate) { alert('시작일을 입력해주세요!'); return; }
+  if (!deadline) { alert('마감일을 입력해주세요!'); return; }
+  if (startDate > deadline) { alert('마감일은 시작일 이후여야 해요!'); return; }
   const formData = new FormData();
   formData.append('title', title);
   formData.append('type', document.getElementById('task-type').value);
   formData.append('priority', document.getElementById('task-priority').value);
   formData.append('description', document.getElementById('task-description').value.trim());
   formData.append('tags', document.getElementById('task-tags').value.trim());
-  formData.append('start_date', document.getElementById('task-start').value);
-  formData.append('deadline', document.getElementById('task-deadline').value);
+  formData.append('start_date', startDate);
+  formData.append('deadline', deadline);
   const img = document.getElementById('task-image').files[0];
   if (img) formData.append('image', img);
-  await authFetch('/api/tasks', { method: 'POST', body: formData });
-  ['task-title','task-description','task-tags','task-start','task-deadline'].forEach(id => document.getElementById(id).value = '');
-  document.getElementById('task-image').value = '';
-  document.getElementById('task-file-name').textContent = '';
-  loadTasks();
+  try {
+    const res = await authFetch('/api/tasks', { method: 'POST', body: formData });
+    const data = await res.json();
+    if (!res.ok) { alert(data.message || '추가 실패!'); return; }
+    ['task-title','task-description','task-tags','task-start','task-deadline'].forEach(id => document.getElementById(id).value = '');
+    document.getElementById('task-image').value = '';
+    document.getElementById('task-file-name').textContent = '';
+    loadTasks();
+  } catch (e) {
+    alert('서버 오류가 발생했어요. 다시 시도해주세요.');
+    console.error(e);
+  }
 }
 
 async function updateTaskStatus(id, status) {
