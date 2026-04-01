@@ -105,6 +105,15 @@ function doLogout() {
   removeToken();
   currentUser = null;
   document.getElementById('admin-btn').style.display = 'none';
+  // 로그인 폼 초기화 (브라우저 자동완성 캐시 방지)
+  document.getElementById('login-username').value = '';
+  document.getElementById('login-password').value = '';
+  document.getElementById('auth-message').textContent = '';
+  // 로그인 탭으로 초기화
+  document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('on'));
+  document.querySelector('.auth-tab').classList.add('on');
+  document.getElementById('login-form').style.display = '';
+  document.getElementById('register-form').style.display = 'none';
   showAuth();
 }
 
