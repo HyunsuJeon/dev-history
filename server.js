@@ -45,18 +45,25 @@ function requireAdmin(req, res, next) {
   next();
 }
 
-// ===== 관리자 초기 생성 =====
+// ===== 관리자 초기 생성 / 동기화 =====
 async function createAdminIfNotExists() {
   const adminUsername = process.env.ADMIN_USERNAME || 'admin';
   const adminPassword = process.env.ADMIN_PASSWORD || 'admin1234';
+  const hash = await bcrypt.hash(adminPassword, 10);
   const existing = await pool.query('SELECT id FROM users WHERE role = $1', ['admin']);
   if (existing.rows.length === 0) {
-    const hash = await bcrypt.hash(adminPassword, 10);
     await pool.query(
       'INSERT INTO users (username, password_hash, role, status) VALUES ($1, $2, $3, $4)',
       [adminUsername, hash, 'admin', 'approved']
     );
     console.log(`관리자 계정 생성: ${adminUsername}`);
+  } else {
+    // 환경변수가 명시적으로 설정된 경우 항상 최신 비밀번호로 업데이트
+    await pool.query(
+      'UPDATE users SET username = $1, password_hash = $2 WHERE role = $3',
+      [adminUsername, hash, 'admin']
+    );
+    console.log(`관리자 계정 동기화: ${adminUsername}`);
   }
 }
 
